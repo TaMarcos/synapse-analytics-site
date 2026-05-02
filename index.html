@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xperiun Seguradora | Projeto Educacional Synapse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050812;
+      --bg2:#09111F;
+      --surface:rgba(255,255,255,.07);
+      --surface2:rgba(255,255,255,.11);
+      --card:rgba(255,255,255,.075);
+      --card2:rgba(255,255,255,.12);
+      --line:rgba(255,255,255,.12);
+      --line2:rgba(103,183,255,.32);
+      --text:#F8FBFF;
+      --text-strong:#FFFFFF;
+      --muted:rgba(248,251,255,.66);
+      --muted2:rgba(248,251,255,.46);
+      --blue:#58A6FF;
+      --blue2:#1B7DFF;
+      --cyan:#9ED2FF;
+      --green:#54D990;
+      --amber:#F6C85F;
+      --red:#FF6B8A;
+      --shadow:0 40px 120px rgba(0,0,0,.42);
+      --soft-shadow:0 24px 80px rgba(0,0,0,.22);
+      --radius:32px;
+      --glass-blur:26px;
+    }
+
+    body.light{
+      --bg:#F6FAFF;
+      --bg2:#FFFFFF;
+      --surface:rgba(255,255,255,.74);
+      --surface2:rgba(255,255,255,.92);
+      --card:rgba(255,255,255,.78);
+      --card2:rgba(255,255,255,.96);
+      --line:rgba(10,37,64,.09);
+      --line2:rgba(27,125,255,.24);
+      --text:#0A2540;
+      --text-strong:#06172B;
+      --muted:rgba(10,37,64,.66);
+      --muted2:rgba(10,37,64,.44);
+      --shadow:0 36px 120px rgba(10,37,64,.13);
+      --soft-shadow:0 20px 70px rgba(10,37,64,.10);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      overflow-x:hidden;
+      transition:background .45s ease,color .45s ease;
+    }
+
+    body:before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:
+        radial-gradient(circle at 46% 8%,rgba(88,166,255,.22) 0%,transparent 38%),
+        radial-gradient(circle at 14% 72%,rgba(84,217,144,.10) 0%,transparent 34%),
+        radial-gradient(circle at 86% 76%,rgba(158,210,255,.10) 0%,transparent 34%),
+        linear-gradient(180deg,#030713 0%,#071327 48%,#030713 100%);
+      z-index:-5;
+      transition:background .45s ease;
+    }
+
+    body.light:before{
+      background:
+        radial-gradient(circle at 47% 6%,rgba(27,125,255,.18) 0%,transparent 42%),
+        radial-gradient(circle at 14% 72%,rgba(84,217,144,.12) 0%,transparent 34%),
+        radial-gradient(circle at 86% 78%,rgba(88,166,255,.10) 0%,transparent 36%),
+        linear-gradient(180deg,#F6FAFF 0%,#EDF5FF 46%,#FFFFFF 100%);
+    }
+
+    #gridCanvas{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      z-index:-4;
+      opacity:.72;
+      transition:opacity .45s ease;
+    }
+    body.light #gridCanvas{opacity:.22}
+
+    #p3d{
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      pointer-events:none;
+      opacity:.62;
+      mix-blend-mode:screen;
+      transition:opacity .45s ease;
+    }
+    body.light #p3d{
+      opacity:.20;
+      mix-blend-mode:multiply;
+    }
+
+    .orb{
+      position:fixed;
+      width:min(760px,80vw);
+      height:min(760px,80vw);
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(88,166,255,.18) 0%,rgba(27,125,255,.075) 42%,transparent 72%);
+      top:4%;
+      left:50%;
+      transform:translateX(-50%);
+      animation:pulse 5s ease-in-out infinite;
+      z-index:-2;
+      pointer-events:none;
+      filter:blur(2px);
+    }
+    body.light .orb{
+      background:radial-gradient(circle,rgba(27,125,255,.12) 0%,rgba(103,183,255,.06) 42%,transparent 72%);
+    }
+
+    .noise{
+      position:fixed;
+      inset:0;
+      background:
+        linear-gradient(rgba(255,255,255,.026) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.020) 1px,transparent 1px);
+      background-size:64px 64px;
+      z-index:-1;
+      mask-image:linear-gradient(to bottom,rgba(0,0,0,.92),rgba(0,0,0,.16));
+      pointer-events:none;
+    }
+    body.light .noise{
+      background:
+        linear-gradient(rgba(10,37,64,.040) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(10,37,64,.032) 1px,transparent 1px);
+      opacity:.42;
+    }
+
+    .container{
+      width:min(1180px,calc(100% - 48px));
+      margin:0 auto;
+    }
+
+    header{
+      position:fixed;
+      top:18px;
+      left:50%;
+      transform:translateX(-50%);
+      width:min(1180px,calc(100% - 40px));
+      z-index:30;
+      border:1px solid var(--line);
+      background:rgba(5,8,18,.58);
+      backdrop-filter:blur(28px) saturate(1.25);
+      -webkit-backdrop-filter:blur(28px) saturate(1.25);
+      border-radius:999px;
+      box-shadow:0 20px 80px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+      transition:.45s ease;
+    }
+
+    body.light header{
+      background:rgba(255,255,255,.78);
+      box-shadow:0 16px 60px rgba(10,37,64,.11), inset 0 1px 0 rgba(255,255,255,.95);
+    }
+
+    .nav{
+      min-height:70px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:10px 14px 10px 18px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:max-content;
+      text-decoration:none;
+    }
+
+    .brand-shell{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:50px;
+      padding:0 18px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.15);
+      background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.04));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 0 34px rgba(88,166,255,.16);
+      position:relative;
+      overflow:hidden;
+    }
+    body.light .brand-shell{
+      background:linear-gradient(135deg,rgba(6,23,43,.96),rgba(10,37,64,.88));
+      border-color:rgba(27,125,255,.16);
+      box-shadow:0 14px 38px rgba(10,37,64,.14), inset 0 1px 0 rgba(255,255,255,.10);
+    }
+
+    .brand-shell:before{
+      content:"";
+      position:absolute;
+      inset:-80% -30%;
+      background:linear-gradient(120deg,transparent,rgba(255,255,255,.22),transparent);
+      transform:translateX(-70%) rotate(12deg);
+      animation:logoShine 6s ease-in-out infinite;
+    }
+
+    .brand-shell:after{
+      content:"";
+      position:absolute;
+      inset:0;
+      border-radius:22px;
+      background:linear-gradient(135deg,rgba(88,166,255,.15),transparent 46%);
+      pointer-events:none;
+    }
+
+    .brand-logo{
+      width:156px;
+      height:auto;
+      display:block;
+      object-fit:contain;
+      filter:drop-shadow(0 0 16px rgba(255,255,255,.22));
+      position:relative;
+      z-index:1;
+    }
+
+    nav ul{
+      display:flex;
+      align-items:center;
+      list-style:none;
+      gap:4px;
+    }
+
+    nav a{
+      color:var(--muted);
+      text-decoration:none;
+      font-size:13px;
+      font-weight:650;
+      padding:10px 10px;
+      border-radius:999px;
+      transition:.25s ease;
+      white-space:nowrap;
+    }
+    nav a:hover, nav a.active{
+      color:var(--text-strong);
+      background:rgba(88,166,255,.105);
+      box-shadow:inset 0 0 0 1px var(--line2);
+    }
+
+    .theme-toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      padding:4px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.055);
+      backdrop-filter:blur(14px);
+      -webkit-backdrop-filter:blur(14px);
+      flex-shrink:0;
+    }
+
+    .theme-option{
+      border:0;
+      cursor:pointer;
+      min-width:38px;
+      height:34px;
+      border-radius:999px;
+      color:var(--muted);
+      background:transparent;
+      font-weight:850;
+      font-size:13px;
+      transition:.25s ease;
+    }
+    .theme-option.active{
+      background:var(--text-strong);
+      color:var(--bg);
+      box-shadow:0 0 24px rgba(88,166,255,.20);
+    }
+    body.light .theme-option.active{background:#0A2540;color:#fff}
+
+    .quote-btn{
+      text-decoration:none;
+      padding:12px 18px;
+      border-radius:999px;
+      background:var(--text-strong);
+      color:var(--bg);
+      font-weight:800;
+      font-size:13px;
+      box-shadow:0 0 28px rgba(255,255,255,.16);
+      transition:.25s ease;
+      white-space:nowrap;
+      flex-shrink:0;
+    }
+    body.light .quote-btn{
+      background:#0A2540;
+      color:#fff;
+      box-shadow:0 12px 30px rgba(10,37,64,.15);
+    }
+    .quote-btn:hover{transform:translateY(-1px);box-shadow:0 0 36px rgba(88,166,255,.35)}
+
+    section{position:relative;padding:112px 0}
+
+    .hero{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      padding-top:150px;
+      overflow:hidden;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:54px;
+      align-items:center;
+    }
+
+    .eyebrow{
+      font-size:11px;
+      letter-spacing:5.5px;
+      text-transform:uppercase;
+      color:var(--blue);
+      font-weight:850;
+      margin-bottom:18px;
+    }
+
+    h1{
+      font-size:clamp(54px,7vw,94px);
+      line-height:.98;
+      letter-spacing:-4.8px;
+      font-weight:900;
+      color:var(--text-strong);
+      text-shadow:0 0 44px rgba(70,150,255,.24);
+      margin-bottom:22px;
+    }
+    body.light h1{text-shadow:none}
+
+    .gradient-text{
+      background:linear-gradient(90deg,#FFFFFF,#80BEFF 45%,#D7ECFF);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    body.light .gradient-text{
+      background:linear-gradient(90deg,#0A2540 0%,#1B7DFF 48%,#67B7FF 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    .hero p{
+      color:var(--muted);
+      font-size:18px;
+      line-height:1.82;
+      max-width:650px;
+    }
+
+    .hero-actions{
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:30px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:48px;
+      padding:0 22px;
+      border-radius:999px;
+      text-decoration:none;
+      font-size:14px;
+      font-weight:850;
+      transition:.25s ease;
+      border:1px solid var(--line);
+    }
+    .btn-primary{
+      background:var(--text-strong);
+      color:var(--bg);
+      box-shadow:0 14px 36px rgba(255,255,255,.12);
+    }
+    body.light .btn-primary{
+      background:#1B7DFF;
+      color:#fff;
+      box-shadow:0 14px 36px rgba(27,125,255,.24);
+    }
+    .btn-secondary{
+      background:rgba(88,166,255,.08);
+      color:var(--cyan);
+      border-color:rgba(88,166,255,.35);
+    }
+    body.light .btn-secondary{
+      background:rgba(27,125,255,.08);
+      color:#1B7DFF;
+      border-color:rgba(27,125,255,.24);
+    }
+    .btn:hover{transform:translateY(-2px)}
+
+    .hero-card{
+      min-height:580px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.13),rgba(255,255,255,.052));
+      border-radius:44px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(var(--glass-blur)) saturate(1.25);
+      -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(1.25);
+      padding:28px;
+      position:relative;
+      overflow:hidden;
+      transition:.45s ease;
+    }
+    body.light .hero-card{
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.78));
+      border-color:rgba(10,37,64,.08);
+      box-shadow:0 38px 120px rgba(10,37,64,.16), inset 0 1px 0 rgba(255,255,255,.95);
+    }
+
+    .hero-card:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:radial-gradient(circle at 50% 10%,rgba(88,166,255,.26),transparent 42%);
+      pointer-events:none;
+    }
+    body.light .hero-card:before{
+      background:
+        radial-gradient(circle at 50% 0%,rgba(27,125,255,.13),transparent 42%),
+        linear-gradient(135deg,rgba(255,255,255,.75),transparent 42%);
+    }
+
+    .dashboard-mock{
+      position:relative;
+      z-index:2;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .mock-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .tab{
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:700;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background:rgba(255,255,255,.055);
+    }
+    body.light .tab{background:rgba(10,37,64,.035)}
+    .tab.active{
+      border-color:rgba(88,166,255,.48);
+      background:rgba(88,166,255,.12);
+      color:var(--blue);
+    }
+
+    .mock-kpis{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      margin-top:8px;
+    }
+
+    .kpi{
+      border:1px solid var(--line);
+      background:rgba(2,8,23,.42);
+      border-radius:24px;
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    body.light .kpi{
+      background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(247,250,255,.82));
+      border-color:rgba(10,37,64,.08);
+      box-shadow:0 16px 40px rgba(10,37,64,.08), inset 0 1px 0 rgba(255,255,255,.90);
+    }
+
+    .kpi:after{
+      content:"";
+      position:absolute;
+      height:2px;
+      left:20px;
+      right:20px;
+      bottom:0;
+      background:linear-gradient(90deg,var(--blue),transparent);
+      opacity:.65;
+    }
+    .kpi span{
+      color:var(--muted2);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:1.4px;
+      font-weight:850;
+    }
+    .kpi strong{
+      display:block;
+      font-size:32px;
+      margin-top:8px;
+      letter-spacing:-1px;
+      color:var(--text-strong);
+    }
+    .kpi small{color:var(--muted);font-size:12px}
+
+    .chart-card{
+      flex:1;
+      border:1px solid var(--line);
+      background:rgba(2,8,23,.34);
+      border-radius:30px;
+      padding:24px;
+      overflow:hidden;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    body.light .chart-card{
+      background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(245,249,255,.82));
+      border-color:rgba(10,37,64,.08);
+      box-shadow:0 18px 50px rgba(10,37,64,.08), inset 0 1px 0 rgba(255,255,255,.95);
+    }
+
+    .bars{display:flex;flex-direction:column;gap:15px;margin-top:22px}
+    .bar-row{
+      display:grid;
+      grid-template-columns:110px 1fr 58px;
+      gap:12px;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    .bar-track{
+      height:10px;
+      background:rgba(255,255,255,.08);
+      border-radius:99px;
+      overflow:hidden;
+    }
+    body.light .bar-track{background:rgba(10,37,64,.08)}
+    .bar-fill{
+      height:100%;
+      border-radius:99px;
+      background:linear-gradient(90deg,#1B7DFF,#74B9FF);
+      box-shadow:0 0 18px rgba(88,166,255,.35);
+    }
+
+    .metrics-strip{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.055);
+      border-radius:30px;
+      overflow:hidden;
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      margin-top:38px;
+      box-shadow:var(--soft-shadow);
+    }
+    body.light .metrics-strip{
+      background:rgba(255,255,255,.72);
+      box-shadow:0 24px 70px rgba(10,37,64,.10);
+    }
+    .metric{padding:22px 24px;border-right:1px solid var(--line)}
+    .metric:last-child{border-right:0}
+    .metric strong{display:block;font-size:28px;letter-spacing:-1px;color:var(--text-strong)}
+    .metric span{display:block;margin-top:6px;font-size:10px;letter-spacing:1.4px;color:var(--muted2);text-transform:uppercase;font-weight:850}
+
+    .section-head{max-width:760px;margin-bottom:42px}
+    .section-head.center{text-align:center;margin-inline:auto}
+    h2{
+      font-size:clamp(38px,4.5vw,64px);
+      line-height:1.035;
+      letter-spacing:-2.8px;
+      font-weight:900;
+      margin-bottom:16px;
+      color:var(--text-strong);
+    }
+    .section-head p{color:var(--muted);font-size:17px;line-height:1.82}
+
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+
+    .card{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.045));
+      border-radius:var(--radius);
+      padding:30px;
+      box-shadow:var(--soft-shadow);
+      backdrop-filter:blur(20px) saturate(1.18);
+      -webkit-backdrop-filter:blur(20px) saturate(1.18);
+      position:relative;
+      overflow:hidden;
+      transition:.28s ease;
+    }
+    body.light .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(247,250,255,.78));
+      border-color:rgba(10,37,64,.08);
+      box-shadow:0 24px 80px rgba(10,37,64,.10), inset 0 1px 0 rgba(255,255,255,.95);
+    }
+    .card:hover{
+      transform:translateY(-5px);
+      border-color:var(--line2);
+      box-shadow:var(--shadow);
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at 22% 0%,rgba(88,166,255,.15),transparent 36%);
+      opacity:.85;
+      pointer-events:none;
+    }
+    body.light .card:before{
+      background:radial-gradient(circle at 22% 0%,rgba(27,125,255,.10),transparent 36%);
+    }
+    .card > *{position:relative;z-index:1}
+
+    .icon{
+      width:54px;
+      height:54px;
+      border-radius:19px;
+      display:grid;
+      place-items:center;
+      background:rgba(88,166,255,.105);
+      border:1px solid rgba(88,166,255,.25);
+      color:var(--cyan);
+      font-size:24px;
+      margin-bottom:20px;
+      box-shadow:0 0 24px rgba(88,166,255,.12);
+    }
+    body.light .icon{
+      background:rgba(27,125,255,.08);
+      color:#1B7DFF;
+      border-color:rgba(27,125,255,.20);
+    }
+    .card h3{font-size:22px;letter-spacing:-.7px;margin-bottom:10px;color:var(--text-strong)}
+    .card p{color:var(--muted);line-height:1.75;font-size:15px}
+
+    .pill-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+    .pill{
+      padding:8px 13px;
+      border-radius:999px;
+      background:rgba(255,255,255,.055);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      font-weight:750;
+    }
+    body.light .pill{background:rgba(10,37,64,.035)}
+
+    .feature{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center}
+
+    .panel{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.055);
+      border-radius:38px;
+      padding:32px;
+      backdrop-filter:blur(20px) saturate(1.18);
+      -webkit-backdrop-filter:blur(20px) saturate(1.18);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    body.light .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(248,251,255,.78));
+      border-color:rgba(10,37,64,.08);
+      box-shadow:0 30px 100px rgba(10,37,64,.12);
+    }
+    .panel:before{
+      content:"";
+      position:absolute;
+      inset:auto -20% -30% -20%;
+      height:240px;
+      background:radial-gradient(circle,rgba(88,166,255,.15),transparent 64%);
+      pointer-events:none;
+    }
+
+    .step{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--line);position:relative;z-index:1}
+    .step:last-child{border-bottom:0}
+    .step-num{
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      color:#07111f;
+      background:linear-gradient(135deg,#fff,#74B9FF);
+      font-size:12px;
+      font-weight:900;
+    }
+    .step h4{font-size:16px;margin-bottom:5px;color:var(--text-strong)}
+    .step p{font-size:14px;color:var(--muted);line-height:1.6}
+
+    .quote-section{padding-bottom:140px}
+    .quote-box{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:24px;
+      align-items:stretch;
+      border:1px solid var(--line2);
+      background:linear-gradient(135deg,rgba(88,166,255,.13),rgba(255,255,255,.058));
+      border-radius:46px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(26px) saturate(1.20);
+      -webkit-backdrop-filter:blur(26px) saturate(1.20);
+      overflow:hidden;
+      position:relative;
+    }
+    body.light .quote-box{
+      background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(235,246,255,.78));
+      box-shadow:0 38px 120px rgba(10,37,64,.14);
+      border-color:rgba(27,125,255,.18);
+    }
+    .quote-box:before{
+      content:"";
+      position:absolute;
+      width:520px;
+      height:520px;
+      right:-170px;
+      top:-190px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(88,166,255,.23),transparent 68%);
+      pointer-events:none;
+    }
+    .quote-content{padding:28px;position:relative;z-index:1}
+    .form{
+      background:rgba(2,8,23,.50);
+      border:1px solid var(--line);
+      border-radius:34px;
+      padding:24px;
+      position:relative;
+      z-index:1;
+    }
+    body.light .form{
+      background:rgba(255,255,255,.86);
+      border-color:rgba(10,37,64,.08);
+      box-shadow:0 20px 70px rgba(10,37,64,.10);
+    }
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .field{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+    .field.full{grid-column:1/-1}
+    label{color:var(--muted);font-size:12px;font-weight:850;letter-spacing:.4px}
+    input, select, textarea{
+      width:100%;
+      background:rgba(255,255,255,.07);
+      color:var(--text-strong);
+      border:1px solid var(--line);
+      border-radius:17px;
+      padding:14px 14px;
+      outline:none;
+      font-family:inherit;
+      transition:.22s ease;
+    }
+    body.light input, body.light select, body.light textarea{
+      background:rgba(255,255,255,.82);
+      color:#0A2540;
+      border-color:rgba(10,37,64,.11);
+    }
+    input:focus,select:focus,textarea:focus{border-color:var(--line2);box-shadow:0 0 0 4px rgba(88,166,255,.10)}
+    textarea{min-height:110px;resize:vertical}
+    input::placeholder, textarea::placeholder{color:var(--muted2)}
+    select option{color:#07111f}
+
+    footer{
+      border-top:1px solid var(--line);
+      background:rgba(0,0,0,.18);
+      padding:34px 0;
+      color:var(--muted2);
+      font-size:13px;
+    }
+    body.light footer{background:rgba(255,255,255,.54)}
+    .footer-row{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+    .edu-note{color:var(--muted2);font-size:12px;line-height:1.7;max-width:660px}
+
+    .mobile-menu{display:none}
+
+    @keyframes pulse{
+      0%,100%{transform:translateX(-50%) scale(1);opacity:.62}
+      50%{transform:translateX(-50%) scale(1.16);opacity:1}
+    }
+    @keyframes logoShine{
+      0%,55%{transform:translateX(-70%) rotate(12deg);opacity:0}
+      70%{opacity:1}
+      100%{transform:translateX(76%) rotate(12deg);opacity:0}
+    }
+
+    @media(max-width:1060px){
+      nav a{font-size:12px;padding:9px 8px}
+      .brand-logo{width:138px}
+      .quote-btn{padding:11px 14px}
+    }
+
+    @media(max-width:980px){
+      header{top:12px;border-radius:28px}
+      .nav{height:auto;padding:16px;align-items:flex-start;flex-direction:column}
+      nav ul{display:none;flex-direction:column;align-items:stretch;width:100%;padding-top:8px}
+      nav ul.open{display:flex}
+      nav a{display:block}
+      .mobile-menu{
+        display:block;
+        position:absolute;
+        right:18px;
+        top:18px;
+        border:1px solid var(--line);
+        background:rgba(255,255,255,.06);
+        color:var(--text-strong);
+        border-radius:12px;
+        padding:10px 12px;
+      }
+      .theme-toggle{position:absolute;right:70px;top:16px}
+      .quote-btn{position:absolute;right:168px;top:16px}
+      .hero-grid,.feature,.quote-box{grid-template-columns:1fr}
+      .hero{padding-top:190px}
+      .hero-card{min-height:auto}
+      .metrics-strip{grid-template-columns:repeat(2,1fr)}
+      .metric:nth-child(2){border-right:0}
+      .metric:nth-child(1),.metric:nth-child(2){border-bottom:1px solid var(--line)}
+      .grid-3,.grid-2{grid-template-columns:1fr}
+      h1{letter-spacing:-2.5px}
+    }
+
+    @media(max-width:620px){
+      .container{width:min(100% - 28px,1180px)}
+      section{padding:82px 0}
+      .hero{padding-top:190px}
+      .quote-btn{display:none}
+      .theme-toggle{right:70px;top:16px}
+      .mock-kpis,.form-grid{grid-template-columns:1fr}
+      .metrics-strip{grid-template-columns:1fr}
+      .metric{border-right:0;border-bottom:1px solid var(--line)}
+      .metric:last-child{border-bottom:0}
+      .bar-row{grid-template-columns:86px 1fr 46px}
+      .hero-card,.panel,.quote-box{border-radius:30px}
+      h1{font-size:52px}
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="gridCanvas"></canvas>
+  <div id="p3d" aria-hidden="true"></div>
+  <div class="orb"></div>
+  <div class="noise"></div>
+
+  <header>
+    <div class="nav">
+      <a class="brand" href="#inicio" aria-label="Synapse Analytics">
+          <span class="brand-shell">
+            <img src="data:image/png;base64,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" alt="Synapse Analytics" class="brand-logo" />
+          </span>
+        </a>
+
+      <button class="mobile-menu" id="menuBtn">☰</button>
+
+      <nav>
+        <ul id="menu">
+          <li><a href="#quem-somos" class="nav-link">Quem somos?</a></li>
+          <li><a href="#produtos" class="nav-link">Produtos</a></li>
+          <li><a href="#protecao" class="nav-link">Proteção</a></li>
+          <li><a href="#sinistro" class="nav-link">Sinistro</a></li>
+          <li><a href="#empresas" class="nav-link">Empresas</a></li>
+        </ul>
+      </nav>
+
+      <div class="theme-toggle" aria-label="Alternar tema">
+        <button class="theme-option" id="themeDark" type="button" title="Modo dark">☾</button>
+        <button class="theme-option active" id="themeLight" type="button" title="Modo white">☀</button>
+      </div>
+
+      <a class="quote-btn" href="#cotacao">Cotação</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="inicio" class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Proteção · Confiança · Inteligência</div>
+            <h1>Seguro para um futuro <span class="gradient-text">mais tranquilo</span></h1>
+            <p>
+              A Xperiun Seguradora é uma empresa com mais de 35 anos de experiência no mercado,
+              oferecendo soluções completas para vida, auto, residência, patrimônio e empresas.
+              Unimos tecnologia, atendimento humano e inteligência de dados para entregar proteção
+              de forma simples, segura e personalizada.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#produtos">Conhecer produtos</a>
+              <a class="btn btn-secondary" href="#quem-somos">Ver análise do projeto</a>
+            </div>
+
+            <div class="metrics-strip">
+              <div class="metric">
+                <strong>+35</strong>
+                <span>Anos de experiência</span>
+              </div>
+              <div class="metric">
+                <strong>24h</strong>
+                <span>Atendimento digital</span>
+              </div>
+              <div class="metric">
+                <strong>360°</strong>
+                <span>Proteção integrada</span>
+              </div>
+              <div class="metric">
+                <strong>PJ/PF</strong>
+                <span>Soluções sob medida</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-card">
+            <div class="dashboard-mock">
+              <div class="mock-top">
+                <div>
+                  <div class="eyebrow" style="margin:0 0 6px 0;letter-spacing:3px;">Proteção digital</div>
+                  <h3 style="font-size:24px;letter-spacing:-.8px;">Sua apólice em um só lugar</h3>
+                </div>
+                <div class="tabs">
+                  <span class="tab active">Geral</span>
+                  <span class="tab">Produtos</span>
+                  <span class="tab">Faturamento</span>
+                </div>
+              </div>
+
+              <div class="mock-kpis">
+                <div class="kpi">
+                  <span>Atendimento</span>
+                  <strong>24h</strong>
+                  <small>Suporte digital</small>
+                </div>
+                <div class="kpi">
+                  <span>Experiência</span>
+                  <strong>+35</strong>
+                  <small>Anos de mercado</small>
+                </div>
+                <div class="kpi">
+                  <span>Coberturas</span>
+                  <strong>360°</strong>
+                  <small>Vida, auto e empresas</small>
+                </div>
+                <div class="kpi">
+                  <span>Perfil</span>
+                  <strong>PJ/PF</strong>
+                  <small>Planos personalizados</small>
+                </div>
+              </div>
+
+              <div class="chart-card">
+                <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-end;">
+                  <div>
+                    <h3 style="font-size:20px;letter-spacing:-.6px;">Soluções mais procuradas</h3>
+                    <p style="color:var(--muted2);font-size:13px;margin-top:6px;">Proteção para diferentes momentos da vida.</p>
+                  </div>
+                  <span class="pill" style="color:var(--amber);border-color:rgba(251,191,36,.28);background:rgba(251,191,36,.08);">Popular</span>
+                </div>
+
+                <div class="bars">
+                  <div class="bar-row"><span>Auto</span><div class="bar-track"><div class="bar-fill" style="width:92%;background:linear-gradient(90deg,#67B7FF,#D7ECFF);"></div></div><strong>Alta</strong></div>
+                  <div class="bar-row"><span>Vida</span><div class="bar-track"><div class="bar-fill" style="width:86%;"></div></div><strong>Alta</strong></div>
+                  <div class="bar-row"><span>Resid.</span><div class="bar-track"><div class="bar-fill" style="width:78%;background:linear-gradient(90deg,#22C55E,#9EEFC1);"></div></div><strong>Média</strong></div>
+                  <div class="bar-row"><span>Empresas</span><div class="bar-track"><div class="bar-fill" style="width:74%;background:linear-gradient(90deg,#74B9FF,#4ADE80);"></div></div><strong>Média</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quem-somos">
+      <div class="container">
+        <div class="feature">
+          <div class="section-head">
+            <div class="eyebrow">Quem somos?</div>
+            <h2>Uma seguradora orientada por dados e pela jornada do cliente.</h2>
+            <p>
+              Com mais de 35 anos de experiência, a Xperiun atua com foco em proteção, confiança e relacionamento de longo prazo.
+              A proposta desta página é representar uma marca moderna, com linguagem comercial, tecnologia e atendimento próximo do cliente.
+            </p>
+            <div class="pill-list">
+              <span class="pill">Apólices</span>
+              <span class="pill">Clientes</span>
+              <span class="pill">Faturamento</span>
+              <span class="pill">Cancelamentos</span>
+              <span class="pill">Formas de pagamento</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="step">
+              <div class="step-num">01</div>
+              <div>
+                <h4>Experiência consolidada</h4>
+                <p>Mais de três décadas oferecendo soluções de proteção para pessoas, famílias e empresas.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">02</div>
+              <div>
+                <h4>Atendimento próximo</h4>
+                <p>Combinação de canais digitais com suporte humano para orientar o cliente em cada etapa.</p>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-num">03</div>
+              <div>
+                <h4>Proteção personalizada</h4>
+                <p>Planos flexíveis para diferentes perfis, necessidades e momentos da vida.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="produtos">
+      <div class="container">
+        <div class="section-head center">
+          <div class="eyebrow">Produtos</div>
+          <h2>Produtos pensados para diferentes momentos da vida.</h2>
+          <p>
+            A Xperiun oferece soluções para auto, residência, vida e empresas, com coberturas pensadas para simplificar
+            a contratação e entregar segurança em diferentes momentos da jornada do cliente.
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">🚗</div>
+            <h3>Seguro Auto</h3>
+            <p>Proteção para veículos, com foco em segurança, assistência e previsibilidade financeira para o cliente.</p>
+            <div class="pill-list">
+              <span class="pill">Assistência 24h</span>
+              <span class="pill">Cobertura flexível</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="icon">🏠</div>
+            <h3>Seguro Residencial</h3>
+            <p>Coberturas para o lar, avaliando comportamento regional, perfil de cliente e concentração de receita.</p>
+            <div class="pill-list">
+              <span class="pill">Proteção do lar</span>
+              <span class="pill">Serviços emergenciais</span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="icon">💙</div>
+            <h3>Seguro Vida</h3>
+            <p>Produtos voltados à proteção pessoal, com leitura por idade, perfil e preferência de contratação.</p>
+            <div class="pill-list">
+              <span class="pill">Família protegida</span>
+              <span class="pill">Planejamento</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="protecao">
+      <div class="container">
+        <div class="feature">
+          <div class="panel">
+            <div class="chart-card" style="background:rgba(2,8,23,.36);min-height:420px;">
+              <div class="eyebrow" style="letter-spacing:3px;">Proteção inteligente</div>
+              <h3 style="font-size:30px;letter-spacing:-1px;margin-bottom:10px;">Planos que acompanham sua rotina.</h3>
+              <p style="color:var(--muted);line-height:1.8;margin-bottom:24px;">
+                A Xperiun combina tecnologia e atendimento humano para oferecer coberturas claras, contratação simples
+                e acompanhamento próximo em cada etapa da proteção.
+              </p>
+              <div class="bars">
+                <div class="bar-row"><span>Auto</span><div class="bar-track"><div class="bar-fill" style="width:94%;background:linear-gradient(90deg,#67B7FF,#D7ECFF);"></div></div><strong>Auto</strong></div>
+                <div class="bar-row"><span>Vida</span><div class="bar-track"><div class="bar-fill" style="width:88%;background:linear-gradient(90deg,#67B7FF,#D7ECFF);"></div></div><strong>Vida</strong></div>
+                <div class="bar-row"><span>Resid.</span><div class="bar-track"><div class="bar-fill" style="width:76%;background:linear-gradient(90deg,#67B7FF,#D7ECFF);"></div></div><strong>Lar</strong></div>
+                <div class="bar-row"><span>Empresas</span><div class="bar-track"><div class="bar-fill" style="width:70%;background:linear-gradient(90deg,#4ADE80,#9EEFC1);"></div></div><strong>PJ</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-head">
+            <div class="eyebrow">Proteção</div>
+            <h2>Proteção começa antes do sinistro.</h2>
+            <p>
+              A proteção precisa ser simples de entender e fácil de acionar. Por isso, a Xperiun valoriza clareza na contratação,
+              orientação durante a jornada e ofertas alinhadas ao perfil de cada cliente.
+            </p>
+
+            <div class="grid-2" style="margin-top:24px;">
+              <div class="card" style="padding:22px;border-radius:24px;">
+                <h3 style="font-size:18px;">Onboarding</h3>
+                <p>Explicar coberturas, reduzir dúvidas e garantir que a expectativa criada seja compatível com a experiência entregue.</p>
+              </div>
+              <div class="card" style="padding:22px;border-radius:24px;">
+                <h3 style="font-size:18px;">Prevenção de churn</h3>
+                <p>Monitorar sinais de risco por canal, produto, tempo de contratação e comportamento de pagamento.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="sinistro">
+      <div class="container">
+        <div class="section-head center">
+          <div class="eyebrow">Sinistro</div>
+          <h2>Atendimento claro, rápido e monitorado por indicadores.</h2>
+          <p>
+            Em uma operação orientada por dados, o sinistro não é apenas um processo operacional: ele influencia satisfação,
+            percepção de valor e permanência do cliente na carteira.
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon">📲</div>
+            <h3>Abertura digital</h3>
+            <p>Jornada simples para registrar a solicitação, anexar documentos e acompanhar o andamento.</p>
+          </div>
+          <div class="card">
+            <div class="icon">🛡️</div>
+            <h3>Análise da cobertura</h3>
+            <p>Validação do produto contratado, cobertura vigente e relacionamento com a apólice.</p>
+          </div>
+          <div class="card">
+            <div class="icon">📊</div>
+            <h3>Indicadores de experiência</h3>
+            <p>Monitoramento de tempo, satisfação, gargalos e impactos na retenção da carteira.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="empresas">
+      <div class="container">
+        <div class="feature">
+          <div class="section-head">
+            <div class="eyebrow">Empresas</div>
+            <h2>Soluções para clientes PJ com visão consultiva.</h2>
+            <p>
+              Para empresas, a Xperiun oferece uma abordagem consultiva, com soluções para continuidade do negócio,
+              proteção patrimonial, colaboradores e riscos operacionais.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#cotacao">Solicitar cotação empresarial</a>
+              <a class="btn btn-secondary" href="#produtos">Ver produtos</a>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="icon">🏢</div>
+              <h3>Proteção empresarial</h3>
+              <p>Produtos para continuidade do negócio, patrimônio, colaboradores e riscos operacionais.</p>
+            </div>
+            <div class="card">
+              <div class="icon">🤝</div>
+              <h3>Renovação consultiva</h3>
+              <p>Acompanhamento próximo para manter as coberturas adequadas à realidade de cada empresa.</p>
+            </div>
+            <div class="card">
+              <div class="icon">📈</div>
+              <h3>Gestão de carteira</h3>
+              <p>Organização das apólices, coberturas e renovações em uma visão simples e centralizada.</p>
+            </div>
+            <div class="card">
+              <div class="icon">🔎</div>
+              <h3>Perfil de risco</h3>
+              <p>Identificação das necessidades da empresa para recomendar proteções mais aderentes.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cotacao" class="quote-section">
+      <div class="container">
+        <div class="quote-box">
+          <div class="quote-content">
+            <div class="eyebrow">Cotação</div>
+            <h2>Simule uma cotação inteligente.</h2>
+            <p style="color:var(--muted);font-size:17px;line-height:1.8;max-width:580px;">
+              Preencha as informações abaixo para receber uma cotação personalizada. A Xperiun entende seu perfil,
+              suas preferências e indica a proteção mais adequada para sua rotina ou empresa.
+            </p>
+            <div class="pill-list" style="margin-top:26px;">
+              <span class="pill">Cotação personalizada</span>
+              <span class="pill">Atendimento consultivo</span>
+              <span class="pill">Produto desejado</span>
+              <span class="pill">Contratação simples</span>
+            </div>
+          </div>
+
+          <form class="form" onsubmit="event.preventDefault(); showSuccess();">
+            <div class="form-grid">
+              <div class="field">
+                <label>Nome</label>
+                <input placeholder="Seu nome" />
+              </div>
+              <div class="field">
+                <label>Perfil</label>
+                <select>
+                  <option>Pessoa Física</option>
+                  <option>Pessoa Jurídica</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Produto</label>
+                <select>
+                  <option>Seguro Auto</option>
+                  <option>Seguro Residencial</option>
+                  <option>Seguro Vida</option>
+                  <option>Seguro Empresarial</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Forma de pagamento</label>
+                <select>
+                  <option>Cartão de crédito</option>
+                  <option>Boleto</option>
+                  <option>Pix</option>
+                  <option>Débito automático</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label>Mensagem</label>
+                <textarea placeholder="Conte rapidamente o que você precisa proteger."></textarea>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;border:0;cursor:pointer;margin-top:6px;">Solicitar cotação</button>
+            <p id="successMsg" style="display:none;color:var(--green);font-size:13px;margin-top:14px;text-align:center;">Cotação enviada com sucesso. Em breve entraremos em contato.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <div>
+        <strong style="color:#fff;">Xperiun Seguradora</strong>
+        <span style="display:block;margin-top:6px;">Proteção para vida, auto, residência e empresas.</span>
+      </div>
+      <p class="edu-note">
+        Página conceitual criada para portfólio e fins educacionais, representando uma seguradora moderna com foco em proteção, tecnologia e atendimento consultivo.
+      </p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <script>
+    const canvas = document.getElementById('gridCanvas');
+    const ctx = canvas.getContext('2d');
+    let w,h,t=0,particles=[];
+
+    function resize(){
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      particles = Array.from({length: Math.min(90, Math.floor(w/18))}, () => ({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        r: Math.random()*1.7+.35,
+        vx: (Math.random()-.5)*.16,
+        vy: (Math.random()-.5)*.16,
+        a: Math.random()*.42+.08
+      }));
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,w,h);
+      const light = document.body.classList.contains('light');
+      const sz = 64;
+      const ox = (t*.20)%sz;
+      const oy = (t*.10)%sz;
+
+      ctx.strokeStyle = light ? 'rgba(27,125,255,0.055)' : 'rgba(88,166,255,0.060)';
+      ctx.lineWidth=.5;
+
+      for(let x=-sz+ox;x<w+sz;x+=sz){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+      for(let y=-sz+oy;y<h+sz;y+=sz){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+
+      particles.forEach((p,i)=>{
+        p.x += p.vx; p.y += p.vy;
+        if(p.x<0||p.x>w) p.vx*=-1;
+        if(p.y<0||p.y>h) p.vy*=-1;
+
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle = light ? `rgba(27,125,255,${p.a*.78})` : `rgba(103,183,255,${p.a})`;
+        ctx.fill();
+
+        for(let j=i+1;j<particles.length;j++){
+          const q=particles[j], dx=p.x-q.x, dy=p.y-q.y, d=Math.sqrt(dx*dx+dy*dy);
+          if(d<116){
+            ctx.beginPath();
+            ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+            ctx.strokeStyle = light ? `rgba(27,125,255,${(1-d/116)*.055})` : `rgba(103,183,255,${(1-d/116)*.080})`;
+            ctx.stroke();
+          }
+        }
+      });
+
+      t+=.5;
+      requestAnimationFrame(draw);
+    }
+
+    resize(); draw(); window.addEventListener('resize', resize);
+
+    const menuBtn = document.getElementById('menuBtn');
+    const menu = document.getElementById('menu');
+    if(menuBtn) menuBtn.addEventListener('click',()=>menu.classList.toggle('open'));
+
+    const links = [...document.querySelectorAll('.nav-link')];
+    const sections = links.map(a => document.querySelector(a.getAttribute('href')));
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY + 160;
+      sections.forEach((sec, idx) => {
+        if(sec && y >= sec.offsetTop && y < sec.offsetTop + sec.offsetHeight){
+          links.forEach(l=>l.classList.remove('active'));
+          links[idx].classList.add('active');
+        }
+      });
+    });
+    links.forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+
+    function showSuccess(){
+      const msg = document.getElementById('successMsg');
+      if(msg) msg.style.display='block';
+    }
+
+    const themeDark = document.getElementById('themeDark');
+    const themeLight = document.getElementById('themeLight');
+    function setTheme(mode){
+      document.body.classList.toggle('light', mode === 'light');
+      themeDark?.classList.toggle('active', mode === 'dark');
+      themeLight?.classList.toggle('active', mode === 'light');
+      localStorage.setItem('xperiun-theme', mode);
+    }
+    setTheme(localStorage.getItem('xperiun-theme') || 'light');
+    themeDark?.addEventListener('click', () => setTheme('dark'));
+    themeLight?.addEventListener('click', () => setTheme('light'));
+
+    function startParticles3D(){
+      if(typeof THREE === 'undefined'){setTimeout(startParticles3D,120);return;}
+      const cont = document.getElementById('p3d');
+      if(!cont || cont.dataset.started) return;
+      cont.dataset.started = 'true';
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.55));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000,0);
+      renderer.domElement.style.cssText='position:absolute;inset:0;width:100%;height:100%;';
+      cont.appendChild(renderer.domElement);
+      camera.position.z=25;
+
+      const count = window.innerWidth < 700 ? 2500 : 6200;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(count*3);
+      const colors = new Float32Array(count*3);
+      const sphereTargets = new Float32Array(count*3);
+      const textTargets = new Float32Array(count*3);
+
+      for(let i=0;i<count;i++){
+        const phi=Math.acos(-1+(2*i)/count);
+        const theta=Math.sqrt(count*Math.PI)*phi;
+        const sx=8*Math.cos(theta)*Math.sin(phi);
+        const sy=8*Math.sin(theta)*Math.sin(phi);
+        const sz=8*Math.cos(phi);
+        sphereTargets[i*3]=sx+(Math.random()-.5)*.55+7.2;
+        sphereTargets[i*3+1]=sy+(Math.random()-.5)*.55+1.6;
+        sphereTargets[i*3+2]=sz+(Math.random()-.5)*.55;
+        positions[i*3]=sphereTargets[i*3];
+        positions[i*3+1]=sphereTargets[i*3+1];
+        positions[i*3+2]=sphereTargets[i*3+2];
+        const c=new THREE.Color();
+        const d=Math.sqrt(sx*sx+sy*sy+sz*sz)/8;
+        c.setHSL(0.58+d*.08,.86,.50+d*.18);
+        colors[i*3]=c.r; colors[i*3+1]=c.g; colors[i*3+2]=c.b;
+      }
+
+      function buildText(txt, offsetY){
+        const cv=document.createElement('canvas');
+        const cx=cv.getContext('2d');
+        const fs=92;
+        cx.font='bold '+fs+'px Arial';
+        const tw=cx.measureText(txt).width;
+        cv.width=tw+90; cv.height=fs+90;
+        cx.fillStyle='white';
+        cx.font='bold '+fs+'px Arial';
+        cx.textBaseline='middle'; cx.textAlign='center';
+        cx.fillText(txt,cv.width/2,cv.height/2);
+        const data=cx.getImageData(0,0,cv.width,cv.height).data;
+        const pts=[];
+        for(let i=0;i<data.length;i+=4){
+          if(data[i]>128){
+            const px=(i/4)%cv.width;
+            const py=Math.floor((i/4)/cv.width);
+            if(Math.random()<.34){
+              pts.push({x:(px-cv.width/2)/(fs/8.8)+7.2,y:-(py-cv.height/2)/(fs/8.8)+offsetY+1.6});
+            }
+          }
+        }
+        for(let j=0;j<count;j++){
+          if(j<pts.length){
+            textTargets[j*3]=pts[j].x;
+            textTargets[j*3+1]=pts[j].y;
+            textTargets[j*3+2]=(Math.random()-.5)*.85;
+          }else{
+            const ang=Math.random()*Math.PI*2, rad=Math.random()*18+10;
+            textTargets[j*3]=Math.cos(ang)*rad+7.2;
+            textTargets[j*3+1]=Math.sin(ang)*rad+offsetY+1.6;
+            textTargets[j*3+2]=(Math.random()-.5)*8;
+          }
+        }
+      }
+
+      buildText('XPERIUN', 0);
+      geometry.setAttribute('position',new THREE.BufferAttribute(positions,3));
+      geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));
+      const mat=new THREE.PointsMaterial({size:.078,vertexColors:true,blending:THREE.AdditiveBlending,transparent:true,opacity:.82,sizeAttenuation:true});
+      const particles3D=new THREE.Points(geometry,mat);
+      scene.add(particles3D);
+
+      let state='sphere',morphProgress=0,stateTimer=0;
+      const STATE_DUR=260,MORPH_DUR=115;
+
+      function animate(){
+        requestAnimationFrame(animate);
+        stateTimer++;
+        if(stateTimer>STATE_DUR){
+          if(state==='sphere'){state='morphToText';morphProgress=0;}
+          else if(state==='text'){state='morphToSphere';morphProgress=0;}
+          stateTimer=0;
+        }
+        const pos=particles3D.geometry.attributes.position.array;
+        if(state==='morphToText'||state==='morphToSphere'){
+          morphProgress++;
+          const t=Math.min(morphProgress/MORPH_DUR,1);
+          const et=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+          const from=state==='morphToText'?sphereTargets:textTargets;
+          const to=state==='morphToText'?textTargets:sphereTargets;
+          for(let i=0;i<pos.length;i++) pos[i]=from[i]+(to[i]-from[i])*et;
+          particles3D.geometry.attributes.position.needsUpdate=true;
+          if(morphProgress>=MORPH_DUR){
+            state=state==='morphToText'?'text':'sphere';
+            stateTimer=0;
+          }
+        }
+        if(state==='sphere'){
+          particles3D.rotation.y+=.0025;
+          particles3D.rotation.x+=.0008;
+        }else{
+          particles3D.rotation.y*=.95;
+          particles3D.rotation.x*=.95;
+        }
+        renderer.render(scene,camera);
+      }
+
+      animate();
+      window.addEventListener('resize',()=>{
+        camera.aspect=window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth,window.innerHeight);
+      });
+    }
+
+    startParticles3D();
+  </script>
+</body>
+</html>
